@@ -45,7 +45,7 @@ For each model in the `meshes` directory, follow these steps:
    - Create the initial block mesh
    - Generate the final mesh using snappyHexMesh
 
-3. You can then view the meshes in paraview by opening the foam.foam file. 
+4. You can then view the meshes in paraview by opening the foam.foam file. 
 
 ## Directory Structure
 
