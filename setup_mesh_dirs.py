@@ -3,6 +3,168 @@ import shutil
 from pathlib import Path
 from generate_blockMeshDict import write_blockMeshDict
 from generate_surfaceFeatureExtractDict import write_surfaceFeatureExtractDict
+from generate_snappyHexMeshDict import generate_snappyHexMeshDict
+
+def create_meshQualityDict(output_path):
+    """
+    Create the meshQualityDict file with default settings.
+    
+    Args:
+        output_path (str): Path where to write the meshQualityDict file
+    """
+    meshQualityDict_content = """/*--------------------------------*- C++ -*----------------------------------*\\
+| =========                 |                                                 |
+| \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\\\    /   O peration     | Version:  4.0                                   |
+|   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\\\/     M anipulation  |                                                 |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      meshQualityDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#includeEtc "caseDicts/meshQualityDict"
+// ************************************************************************* //"""
+    
+    with open(output_path, 'w') as f:
+        f.write(meshQualityDict_content)
+
+def create_fvSolution(output_path):
+    """
+    Create the fvSolution file with default settings.
+    
+    Args:
+        output_path (str): Path where to write the fvSolution file
+    """
+    fvSolution_content = """/*--------------------------------*- C++ -*----------------------------------*\\
+| =========                 |                                                 |
+| \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\\\    /   O peration     | Version:  4.0                                   |
+|   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\\\/     M anipulation  |                                                 |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// ************************************************************************* //"""
+    
+    with open(output_path, 'w') as f:
+        f.write(fvSolution_content)
+
+def create_fvSchemes(output_path):
+    """
+    Create the fvSchemes file with default settings.
+    
+    Args:
+        output_path (str): Path where to write the fvSchemes file
+    """
+    fvSchemes_content = """/*--------------------------------*- C++ -*----------------------------------*\\
+| =========                 |                                                 |
+| \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\\\    /   O peration     | Version:  4.0                                   |
+|   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\\\/     M anipulation  |                                                 |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+gradSchemes
+{
+}
+
+divSchemes
+{
+}
+
+laplacianSchemes
+{
+}
+
+// ************************************************************************* //"""
+    
+    with open(output_path, 'w') as f:
+        f.write(fvSchemes_content)
+
+def create_controlDict(output_path):
+    """
+    Create the controlDict file with default settings.
+    
+    Args:
+        output_path (str): Path where to write the controlDict file
+    """
+    controlDict_content = """/*--------------------------------*- C++ -*----------------------------------*\\
+| =========                 |                                                 |
+| \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\\\    /   O peration     | Version:  4.0                                   |
+|   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\\\/     M anipulation  |                                                 |
+\\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//Just dummy entries, don't worry
+
+application     icoFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         50;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   20;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  6;
+
+writeCompression uncompressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+
+// ************************************************************************* //"""
+    
+    with open(output_path, 'w') as f:
+        f.write(controlDict_content)
 
 def setup_mesh_directories(geometry_dir='geometry', meshes_dir='meshes'):
     """
@@ -63,6 +225,34 @@ def setup_mesh_directories(geometry_dir='geometry', meshes_dir='meshes'):
             stl_dir=str(geom_subdir)
         )
         print(f"Generated surfaceFeatureExtractDict in {system_dir}")
+        
+        # Create controlDict
+        controlDict_path = system_dir / 'controlDict'
+        create_controlDict(str(controlDict_path))
+        print(f"Created controlDict in {system_dir}")
+        
+        # Generate snappyHexMeshDict
+        snappyHexMeshDict_path = system_dir / 'snappyHexMeshDict'
+        generate_snappyHexMeshDict(
+            stl_dir=str(geom_subdir),
+            output_path=str(snappyHexMeshDict_path)
+        )
+        print(f"Generated snappyHexMeshDict in {system_dir}")
+        
+        # Create fvSchemes
+        fvSchemes_path = system_dir / 'fvSchemes'
+        create_fvSchemes(str(fvSchemes_path))
+        print(f"Created fvSchemes in {system_dir}")
+        
+        # Create fvSolution
+        fvSolution_path = system_dir / 'fvSolution'
+        create_fvSolution(str(fvSolution_path))
+        print(f"Created fvSolution in {system_dir}")
+        
+        # Create meshQualityDict
+        meshQualityDict_path = system_dir / 'meshQualityDict'
+        create_meshQualityDict(str(meshQualityDict_path))
+        print(f"Created meshQualityDict in {system_dir}")
 
 if __name__ == "__main__":
     setup_mesh_directories() 
