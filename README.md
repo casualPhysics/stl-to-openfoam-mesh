@@ -20,7 +20,7 @@ This tool helps automate the generation of OpenFOAM meshes from STL files.
 
 3. Run the setup script to generate the mesh directory structure:
    ```bash
-   python mesh/setup_mesh_dirs.py
+   python setup_mesh_dirs.py
    ```
    This will create a `meshes` directory with subdirectories matching your geometry structure.
 
