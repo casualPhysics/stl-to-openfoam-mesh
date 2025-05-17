@@ -2,6 +2,11 @@
 
 This tool helps automate the generation of OpenFOAM meshes from STL files.
 
+
+Attribution: 
+Many files adapted from Jozsef Nagy's at examples at
+https://github.com/jnmlujnmlu/OpenFOAMTeaching
+
 ## Setup
 
 1. Place your STL files in a subdirectory under the `geometry` folder. For example:
