@@ -28,7 +28,13 @@ FoamFile
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//Here we use standard mesh quality settings
+
+// Include defaults parameters from master dictionary
 #includeEtc "caseDicts/meshQualityDict"
+
+
 // ************************************************************************* //"""
     
     with open(output_path, 'w') as f:
@@ -86,6 +92,8 @@ FoamFile
     object      fvSchemes;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//Forget this dictionary
 
 gradSchemes
 {
@@ -197,6 +205,11 @@ def setup_mesh_directories(geometry_dir='geometry', meshes_dir='meshes'):
         # Create directories
         os.makedirs(constant_dir, exist_ok=True)
         os.makedirs(system_dir, exist_ok=True)
+        
+        # Create empty foam.foam file
+        foam_file = mesh_subdir / 'foam.foam'
+        foam_file.touch()
+        print(f"Created foam.foam in {mesh_subdir}")
         
         # Copy STL files to constant/triSurface
         stl_files = list(geom_subdir.glob('*.stl'))
